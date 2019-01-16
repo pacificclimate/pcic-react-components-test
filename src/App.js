@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { TextInput } from 'pcic-react-components';
 import logo from './logo.svg';
 import './App.css';
 
@@ -19,6 +20,7 @@ class App extends Component {
           >
             Learn React
           </a>
+          <TextInput label="Email Address" placeholder="name@example.com" />
         </header>
       </div>
     );
