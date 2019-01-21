@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
-import memoize from 'memoize-one';
 import {
   flow, takeWhile, slice, map, reduce, filter, tap,
   sortBy, get, assign,
@@ -11,7 +10,7 @@ import meta from '../../assets/meta'
 import './DemoMEV.css';
 import {
   ModelSelector, EmissionsScenarioSelector, VariableSelector,
-  DatasetSelector,
+  DataspecSelector,
 } from 'pcic-react-components';
 
 const objUnion = reduce((result, value) => assign(result, value), {});
@@ -210,7 +209,7 @@ class DemoMEV extends Component {
 
         <Row>
           <Col {...DemoMEV.colProps}>
-            <DatasetSelector
+            <DataspecSelector
               bases={mevFilteredMetadata}
               value={this.state.dataset}
               onChange={this.handleChangeDataset}

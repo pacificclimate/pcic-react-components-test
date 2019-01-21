@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
-import memoize from 'memoize-one';
 import {
   flow, takeWhile, slice, map, reduce, filter, tap, includes,
   sortBy
