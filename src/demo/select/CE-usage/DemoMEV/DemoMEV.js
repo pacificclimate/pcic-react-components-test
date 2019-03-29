@@ -2,18 +2,20 @@ import React, { Component } from 'react';
 import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
 import {
   flow, takeWhile, slice, map, reduce, filter, tap,
-  sortBy, get, assign,
+  sortBy, get,
 } from 'lodash/fp';
+import { fp } from 'pcic-react-components';
 import _ from 'lodash';
 
 import meta from '../../assets/meta'
 import './DemoMEV.css';
 import {
-  ModelSelector, EmissionsScenarioSelector, VariableSelector,
+  ModelSelector,
+  EmissionsScenarioSelector,
+  VariableSelector,
   DataspecSelector,
 } from 'pcic-react-components';
 
-const objUnion = reduce((result, value) => assign(result, value), {});
 
 function stringify(obj) {
   return <pre>{JSON.stringify(obj, null, 2)}</pre>;
@@ -24,14 +26,8 @@ class DemoMEV extends Component {
   state = {
     mev: {
       model: undefined,
-      emissions: {
-        // experiment: 'historical, rcp45',
-      },
-      variable: {
-        // variable_id: "pr",
-        // variable_name: "Precipitation",
-        // multi_year_mean: true,
-      },
+      emissions: undefined,
+      variable: undefined,
     },
     // selectorOrder: 'model emissions variable'.split(' '),
     selectorOrder: 'model emissions variable'.split(' '),
@@ -47,25 +43,25 @@ class DemoMEV extends Component {
       [collection]: { ...prevState[collection], [item]: value }
     }));
 
-  anyHandleChangeModel = (value) =>
+  anyHandleChangeModel = (option) =>
     this.setState(prevState => ({
-      mev: { ...prevState.mev, model: { model_id: value } }
+      mev: { ...prevState.mev, model: option }
     }));
-  anyHandleChangeEmissions = (value) =>
+  anyHandleChangeEmissions = (option) =>
     this.setState(prevState => ({
-      mev: { ...prevState.mev, emissions: { experiment: value } }
+      mev: { ...prevState.mev, emissions: option }
     }));
-  anyHandleChangeVariable = (value) =>
+  anyHandleChangeVariable = (option) =>
     this.setState(prevState => ({
-      mev: { ...prevState.mev, variable: value }
+      mev: { ...prevState.mev, variable: option }
     }));
 
   anySelectorConstraint =
     (thisSelector, selectorOrder, state) => flow(
       tap(() => console.log(`anySelectorConstraint: thisSelector`, thisSelector, `selectorOrder`, selectorOrder, 'state', state)),
       takeWhile(selector => selector !== thisSelector),
-      map(selector => state[selector]),
-      objUnion,
+      map(selector => state[selector] && state[selector].representative),
+      fp.objUnion,
       tap(result => console.log(`anySelectorConstraint: result`, result))
     )(selectorOrder)
   ;
@@ -77,57 +73,42 @@ class DemoMEV extends Component {
   };
 
   anySelector = sel => {
-    switch (sel) {
-      case 'model':
-        const mConstraint = this.anySelectorConstraint('model', this.state.selectorOrder, this.state.mev);
-        return (
-          <Col {...DemoMEV.colProps}>
-            <ModelSelector
-              bases={meta}
-              constraint={mConstraint}
-              value={this.state.mev.model && this.state.mev.model.model_id}
-              onChange={this.anyHandleChangeModel}
-              isSearchable
-              placeholder={'Type here to search list...'}
-            />
-            Value: {stringify(this.state.mev[sel])}
-            Input constraint: {stringify(mConstraint)}
-          </Col>
-        );
+    const Selector = {
+      'model': ModelSelector,
+      'emissions': EmissionsScenarioSelector,
+      'variable': VariableSelector,
+    }[sel];
 
-      case 'emissions':
-        const eConstraint = this.anySelectorConstraint('emissions', this.state.selectorOrder, this.state.mev);
-        return (
-          <Col {...DemoMEV.colProps}>
-            <EmissionsScenarioSelector
-              bases={meta}
-              constraint={eConstraint}
-              value={this.state.mev.emissions.experiment}
-              onChange={this.anyHandleChangeEmissions}
-            />
-            {stringify(this.state.mev[sel])}
-            Input constraint: {stringify(eConstraint)}
-          </Col>
-        );
+    const selProps = {
+      'model': {
+        onChange: this.anyHandleChangeModel,
+      },
+      'emissions': {
+        onChange: this.anyHandleChangeEmissions,
+      },
+      'variable': {
+        onChange: this.anyHandleChangeVariable,
+      },
+    }[sel];
 
-      case 'variable':
-        const vConstraint = this.anySelectorConstraint('variable', this.state.selectorOrder, this.state.mev);
-        return (
-          <Col {...DemoMEV.colProps}>
-            <VariableSelector
-              bases={meta}
-              constraint={vConstraint}
-              value={this.state.mev.variable}
-              onChange={this.anyHandleChangeVariable}
-            />
-            {stringify(this.state.mev[sel])}
-            Input constraint: {stringify(vConstraint)}
-          </Col>
-        );
+    const constraint = this.anySelectorConstraint(sel, this.state.selectorOrder, this.state.mev);
 
-      default:
-        return 'Idiot';
-    }
+    return (
+      <Col {...DemoMEV.colProps}>
+        <div style={{height: '10em'}}>
+          Input constraint: {stringify(constraint)}
+        </div>
+        <Selector
+          bases={meta}
+          constraint={constraint}
+          value={this.state.mev[sel]}
+          debug={true}
+          debugValue={sel}
+          {...selProps}
+        />
+        Value: {stringify(this.state.mev[sel] && this.state.mev[sel].representative)}
+      </Col>
+    );
   };
 
   moveSelectorOrderDown = index => this.setState(prevState => {
@@ -143,7 +124,8 @@ class DemoMEV extends Component {
 
   render() {
     console.log('DemoMEV.render')
-    const mevConstraint = objUnion(this.state.mev);
+    const mevConstraint =
+      fp.objUnion(map(mev => mev && mev.representative)(this.state.mev));
     console.log('DemoMEV.render: mevConstraint', mevConstraint)
     const mevFilteredMetadata = filter(mevConstraint)(meta);
     console.log('DemoMEV.render: mevFilteredMetadata', mevFilteredMetadata)
@@ -152,7 +134,22 @@ class DemoMEV extends Component {
     return (
       <Grid fluid>
         <Row>
-          <Col lg={12} md={12} sm={12}><h1>Model, Emissions, Variable selectors</h1></Col>
+          <Col lg={6} md={12} sm={12}>
+            <p>{`
+              The Model, Emissions, and Scenario selectors below are
+              "cascaded": For any given selector, the selections
+              in all preceding selectors determines which options are
+              enabled. An option is enabled if there is at least one
+              metadata item that it would select in combination with
+              the preceding selections.
+            `}</p>
+            <p>{`
+              The order of the Model, Emissions, and Variable selectors
+              can be changed dynamically (with consequent changes to the
+              cascading). Click an arrow beside any selector label to
+              change its position in the cascade (and in the UI).
+            `}</p>
+          </Col>
         </Row>
         <Row>
             {
@@ -204,17 +201,31 @@ class DemoMEV extends Component {
         </Row>
 
         <Row>
-          <Col lg={12} md={12} sm={12}><h1>Dataset selector</h1></Col>
+          <Col lg={12} md={12} sm={12}>
+            <p>{`
+              The Dataspec selector shows only options that are valid (i.e.,
+              actually select something) in combination with the Model,
+              Emissions, and Variable selections above.
+            `}</p>
+          </Col>
         </Row>
 
         <Row>
           <Col {...DemoMEV.colProps}>
+            mevConstraint:
+            <div style={{height: '10em'}}>
+              {stringify(mevConstraint)}
+            </div>
+            mevFilteredMetadata:
+            {/*<div style={{height: '10em'}}>*/}
+              {/*{stringify(mevFilteredMetadata)}*/}
+            {/*</div>*/}
             <DataspecSelector
               bases={mevFilteredMetadata}
               value={this.state.dataset}
               onChange={this.handleChangeDataset}
             />
-            {stringify(this.state.dataset)}
+            {stringify(this.state.dataset && this.state.dataset.representative)}
           </Col>
           <Col {...DemoMEV.colProps} lgOffset={6} mdOffset={6} smOffset={6}>
             <ul>
