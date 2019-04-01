@@ -5,18 +5,22 @@ import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
+import DemoGroupingSelector from '../select/DemoGroupingSelector';
+import DemoSimpleConstraintGroupingSelector from '../select/DemoSimpleConstraintGroupingSelector';
 import DemoSimple from '../select/DemoSimple';
 import DemoMev from '../select/CE-usage/DemoMEV';
 import DemoP2A from '../select/P2A-usage/DemoP2A';
 
 const navSpec = [
+  { label: 'GS', path: 'GS', component: DemoGroupingSelector },
+  { label: 'SCGS', path: 'SCGS', component: DemoSimpleConstraintGroupingSelector },
   { label: 'Simple', path: 'Simple', component: DemoSimple },
   { label: 'MEV', path: 'MEV', component: DemoMev },
   { label: 'P2A', path: 'P2A', component: DemoP2A },
 ];
 
 
-export default class App extends React.Component {
+export default class Template extends React.Component {
   static propTypes = {
   };
 
@@ -27,7 +31,7 @@ export default class App extends React.Component {
     return (
       <Router basename={'/#'}>
         <div>
-          <h1>pcic-react-components-test</h1>
+          <h1>pcic-react-components</h1>
           <Navbar fluid>
             <Nav>
               {
