@@ -5,7 +5,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "lodash": "^4.17.11",
-    "pcic-react-components": "git+https://git@github.com/pacificclimate/pcic-react-components.git",
+    "pcic-react-components": "git+https://git@github.com/pacificclimate/pcic-react-components.git#2.0.0",
     "react": "^16.7.0",
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.7.0",
