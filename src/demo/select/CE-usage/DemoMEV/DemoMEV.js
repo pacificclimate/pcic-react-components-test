@@ -31,11 +31,7 @@ class DemoMEV extends Component {
     },
     // selectorOrder: 'model emissions variable'.split(' '),
     selectorOrder: 'model emissions variable'.split(' '),
-    dataset: {
-      // "start_date": "1961",
-      // "end_date": "1990",
-      // "ensemble_member": "r1i1p1"
-    },
+    dataset: { value: {} },
   };
 
   handleChangeSelection = (collection, item, value) =>
@@ -60,7 +56,7 @@ class DemoMEV extends Component {
     (thisSelector, selectorOrder, state) => flow(
       tap(() => console.log(`anySelectorConstraint: thisSelector`, thisSelector, `selectorOrder`, selectorOrder, 'state', state)),
       takeWhile(selector => selector !== thisSelector),
-      map(selector => state[selector] && state[selector].representative),
+      map(selector => state[selector] && state[selector].value.representative),
       fp.objUnion,
       tap(result => console.log(`anySelectorConstraint: result`, result))
     )(selectorOrder)
@@ -106,7 +102,7 @@ class DemoMEV extends Component {
           debugValue={sel}
           {...selProps}
         />
-        Value: {stringify(this.state.mev[sel] && this.state.mev[sel].representative)}
+        Value: {stringify(this.state.mev[sel] && this.state.mev[sel].value.representative)}
       </Col>
     );
   };
@@ -125,11 +121,11 @@ class DemoMEV extends Component {
   render() {
     console.log('DemoMEV.render')
     const mevConstraint =
-      fp.objUnion(map(mev => mev && mev.representative)(this.state.mev));
+      fp.objUnion(map(mev => mev && mev.value.representative)(this.state.mev));
     console.log('DemoMEV.render: mevConstraint', mevConstraint)
     const mevFilteredMetadata = filter(mevConstraint)(meta);
     console.log('DemoMEV.render: mevFilteredMetadata', mevFilteredMetadata)
-    const mevdFilteredMetadata = filter(this.state.dataset)(mevFilteredMetadata);
+    const mevdFilteredMetadata = filter(this.state.dataset && this.state.dataset.value.representative)(mevFilteredMetadata);
 
     return (
       <Grid fluid>
@@ -225,7 +221,7 @@ class DemoMEV extends Component {
               value={this.state.dataset}
               onChange={this.handleChangeDataset}
             />
-            {stringify(this.state.dataset && this.state.dataset.representative)}
+            {stringify(this.state.dataset && this.state.dataset.value.representative)}
           </Col>
           <Col {...DemoMEV.colProps} lgOffset={6} mdOffset={6} smOffset={6}>
             <ul>
