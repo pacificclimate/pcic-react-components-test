@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import meta from './assets/meta';
 import Select from 'react-select';
 import {
@@ -37,7 +39,7 @@ export default class DemoGroupingSelector extends Component {
 
   render() {
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
           <Col lg={6}>
             This demo exercises GroupingSelector by passing it the
@@ -53,7 +55,6 @@ export default class DemoGroupingSelector extends Component {
               options={selectors}
               value={this.state.selector}
               onChange={this.handleChangeSelector}
-              menuIsOpen
             />
             {stringify(this.state.selector)}
           </Col>
@@ -66,12 +67,11 @@ export default class DemoGroupingSelector extends Component {
               value={this.state.value}
               onChange={this.handleChangeSelectorValue}
               debug={true}
-              menuIsOpen
             />
-            {stringify(this.state.value && this.state.value.label)}
+            {stringify(this.state.value && this.state.value.value.representative)}
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }

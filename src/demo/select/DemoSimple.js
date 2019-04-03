@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Select from 'react-select';
 import {
   ModelSelector,
@@ -38,7 +40,7 @@ export default class DemoSimple extends Component {
   render() {
     const Selector = this.state.selector.value;
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
           <Col lg={6}>
             This demo exercises each derived selector separately.
@@ -67,7 +69,7 @@ export default class DemoSimple extends Component {
             {stringify(this.state.selectorValue && this.state.selectorValue.value.representative)}
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }
