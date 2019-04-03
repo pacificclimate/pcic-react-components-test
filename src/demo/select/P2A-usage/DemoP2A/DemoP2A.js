@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
-import memoize from 'memoize-one';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import {
   flow, takeWhile, slice, map, reduce, filter, tap, includes,
   sortBy
@@ -46,7 +47,7 @@ class DemoP2A extends Component {
     )(meta);
 
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
           <Col lg={12}>
             <h1>For P2A</h1>
@@ -91,7 +92,7 @@ class DemoP2A extends Component {
             </ul>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }

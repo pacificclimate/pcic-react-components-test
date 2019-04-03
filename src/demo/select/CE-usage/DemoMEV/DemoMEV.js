@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import {
   flow, takeWhile, slice, map, reduce, filter, tap,
   sortBy, get,
@@ -128,7 +132,7 @@ class DemoMEV extends Component {
     const mevdFilteredMetadata = filter(this.state.dataset && this.state.dataset.value.representative)(mevFilteredMetadata);
 
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
           <Col lg={6} md={12} sm={12}>
             <p>{`
@@ -155,20 +159,20 @@ class DemoMEV extends Component {
                     {
                       index > 0 &&
                       <Button
-                        bsSize={'xsmall'}
+                        size={'sm'} variant={'outline-primary'}
                         onClick={this.moveSelectorOrderDown.bind(this, index-1)}
                       >
-                        <Glyphicon glyph={'arrow-left'}/>
+                        <FaArrowLeft/>
                       </Button>
                     }
                     {` ${sel} `}
                     {
                       index < 2 &&
                       <Button
-                        bsSize={'xsmall'}
+                        size={'sm'} variant={'outline-primary'}
                         onClick={this.moveSelectorOrderDown.bind(this, index)}
                       >
-                        <Glyphicon glyph={'arrow-right'}/>
+                        <FaArrowRight/>
                       </Button>
                     }
                   </h2>
@@ -238,7 +242,7 @@ class DemoMEV extends Component {
             </ul>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }

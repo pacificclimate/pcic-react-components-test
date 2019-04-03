@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
+import { Container, Row, Col, Button, Glyphicon } from 'react-bootstrap';
 import meta from './assets/meta';
 import Select from 'react-select';
 import {
@@ -38,7 +38,7 @@ export default class DemoGroupingSelector extends Component {
 
   render() {
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
           <Col lg={6}>
             This demo exercises SimpleConstraintGroupingSelector by passing it the
@@ -68,10 +68,10 @@ export default class DemoGroupingSelector extends Component {
               onChange={this.handleChangeSelectorValue}
               debug={true}
             />
-            {stringify(this.state.value && this.state.value.label)}
+            {stringify(this.state.value && this.state.value.value.representative)}
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }
